@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # Next.js Readarr Portal Application
+  readarr-portal:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: readarr-portal
+    ports:
+      - "3000:3000"
+    environment:
+      # Readarr Configuration
+      - READARR_API_URL=http://readarr:8787
+      - READARR_API_KEY=${READARR_API_KEY}
+      # Books path inside container
+      - BOOKS_PATH=/books
+      # Next.js Configuration
+      - NODE_ENV=production
+    volumes:
+      # Mount the books directory (read-only for the portal)
+      # Change ./my-local-books to your actual books directory path
+      - ./my-local-books:/books:ro
+    networks:
+      - readarr-network
+    restart: unless-stopped
+    depends_on:
+      - readarr
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Readarr Service (Optional - only if you need to run Readarr in Docker)
+  # Remove or comment out if you have Readarr running elsewhere
+  readarr:
+    image: lscr.io/linuxserver/readarr:develop
+    container_name: readarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      # Readarr configuration
+      - ./readarr-config:/config
+      # Books directory (read/write for Readarr)
+      - ./my-local-books:/books
+      # Optional: Download client directory
+      - ./downloads:/downloads
+    ports:
+      - "8787:8787"
+    networks:
+      - readarr-network
+    restart: unless-stopped
+
+networks:
+  readarr-network:
+    driver: bridge
