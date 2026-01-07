@@ -20,6 +20,24 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - AUTH_USER_1=${AUTH_USER_1}
       - AUTH_PASS_1=${AUTH_PASS_1}
+      - AUTH_USER_2=${AUTH_USER_2}
+      - AUTH_PASS_2=${AUTH_PASS_2}
+      - AUTH_USER_3=${AUTH_USER_3}
+      - AUTH_PASS_3=${AUTH_PASS_3}
+      - AUTH_USER_4=${AUTH_USER_4}
+      - AUTH_PASS_4=${AUTH_PASS_4}
+      - AUTH_USER_5=${AUTH_USER_5}
+      - AUTH_PASS_5=${AUTH_PASS_5}
+      - AUTH_USER_6=${AUTH_USER_6}
+      - AUTH_PASS_6=${AUTH_PASS_6}
+      - AUTH_USER_7=${AUTH_USER_7}
+      - AUTH_PASS_7=${AUTH_PASS_7}
+      - AUTH_USER_8=${AUTH_USER_8}
+      - AUTH_PASS_8=${AUTH_PASS_8}
+      - AUTH_USER_9=${AUTH_USER_9}
+      - AUTH_PASS_9=${AUTH_PASS_9}
+      - AUTH_USER_10=${AUTH_USER_10}
+      - AUTH_PASS_10=${AUTH_PASS_10}
     volumes:
       # Mount the books directory (read-only for the portal)
       # Change ./my-local-books to your actual books directory path
