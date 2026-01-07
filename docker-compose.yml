@@ -7,6 +7,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: readarr-portal
+    user: "0:0"  # Run as root (UID 0, GID 0)
     environment:
       # Readarr Configuration
       - READARR_API_URL=http://10.10.10.105:8787
