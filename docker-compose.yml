@@ -7,22 +7,26 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: readarr-portal
-    ports:
-      - "3000:3000"
     environment:
       # Readarr Configuration
-      - READARR_API_URL=http://readarr:8787
+      - READARR_API_URL=http://10.10.10.105:8787
       - READARR_API_KEY=${READARR_API_KEY}
       # Books path inside container
       - BOOKS_PATH=/books
       # Next.js Configuration
       - NODE_ENV=production
+      # Authentication
+      - JWT_SECRET=${JWT_SECRET}
+      - AUTH_USER_1=${AUTH_USER_1}
+      - AUTH_PASS_1=${AUTH_PASS_1}
     volumes:
       # Mount the books directory (read-only for the portal)
       # Change ./my-local-books to your actual books directory path
       - ./my-local-books:/books:ro
     networks:
       - readarr-network
+      - arr-network
+      - traefik
     restart: unless-stopped
     depends_on:
       - readarr
@@ -32,29 +36,19 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.routers.books.rule=Host(`books.jochemwhite.nl`)"
+      - "traefik.http.routers.books.entrypoints=https"
+      - "traefik.http.routers.books.tls.certresolver=letsencrypt"
+      - "traefik.http.services.books.loadbalancer.server.port=3000"
 
-  # Readarr Service (Optional - only if you need to run Readarr in Docker)
-  # Remove or comment out if you have Readarr running elsewhere
-  readarr:
-    image: lscr.io/linuxserver/readarr:develop
-    container_name: readarr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
-    volumes:
-      # Readarr configuration
-      - ./readarr-config:/config
-      # Books directory (read/write for Readarr)
-      - ./my-local-books:/books
-      # Optional: Download client directory
-      - ./downloads:/downloads
-    ports:
-      - "8787:8787"
-    networks:
-      - readarr-network
-    restart: unless-stopped
 
 networks:
   readarr-network:
     driver: bridge
+  arr-network:
+    external: true
+  traefik:
+    external: true
