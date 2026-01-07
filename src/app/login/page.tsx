@@ -34,9 +34,9 @@ function LoginForm() {
         throw new Error(error.error || "Login failed");
       }
 
+      // Use full page redirect to ensure cookie is properly set
       const returnUrl = searchParams.get("from") || "/";
-      router.push(returnUrl);
-      router.refresh();
+      window.location.href = returnUrl;
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Invalid credentials");
       setIsLoading(false);
