@@ -22,7 +22,7 @@ services:
     volumes:
       # Mount the books directory (read-only for the portal)
       # Change ./my-local-books to your actual books directory path
-      - ./my-local-books:/books:ro
+      - ./mnt/plexpool/books:/books:ro
     networks:
       - readarr-network
       - arr-network
